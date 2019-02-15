@@ -1,4 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { BehaviorSubject, fromEvent, merge, Observable, Subject } from 'rxjs';
 import { Person } from './model/person';
 import { DataProviderService } from './services/data-provider.service';
@@ -12,7 +18,7 @@ import { SearchFilterService } from './services/search-filter.service';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
-export class ListComponent implements OnInit, AfterViewInit {
+export class ListComponent implements OnInit {
 
   @ViewChild('search')
   private search: ElementRef;
@@ -32,9 +38,6 @@ export class ListComponent implements OnInit, AfterViewInit {
 
   public ngOnInit() {
     this.dataProvider.getData();
-  }
-
-  public ngAfterViewInit(): void {
     this.filteredPersons$ = this.searchFilterService.prepareFilter(
       this.dataProvider.persons$,
       this.mergeFilterStateObservable()
@@ -57,14 +60,6 @@ export class ListComponent implements OnInit, AfterViewInit {
         )
       ),
       this.thumbIndexSubject.asObservable(),
-      this.dataProvider.persons$.pipe(
-        map(() => {
-          return {
-            type: SearchType.DATA_PROVIDED,
-            query: ''
-          };
-        })
-      )
     );
   }
 

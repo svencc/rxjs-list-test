@@ -9,7 +9,7 @@ import { SearchState } from '../model/searchState';
 })
 export class ThumbIndexComponent implements OnInit {
 
-  public letters: string[];
+  public letters: string[] = [];
 
   @HostListener('click', ['$event.target'])
   onClick(target) {

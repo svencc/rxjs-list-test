@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { Person } from '../model/person';
 import { SearchState, SearchType } from '../model/searchState';
-import { debounce, debounceTime, map, mergeMap, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +11,14 @@ export class SearchFilterService {
 
   constructor() { }
 
-  public prepareFilter(dataSource: Observable<Person[]>, searchState: Observable<SearchState>): Observable<Person[]> {
-    return searchState.pipe(
-      switchMap((search: SearchState) => {
-        return dataSource.pipe(
-          map((persons: Person[]) => {
-            return persons.filter( (person) => this.applyFilterState(search, person)
-            );
-          })
+  public prepareFilter(dataSource$: Observable<Person[]>, searchState$: Observable<SearchState>): Observable<Person[]> {
+
+    return combineLatest(dataSource$, searchState$).pipe(
+      map<[Person[], SearchState], Person[]>((combined: [Person[], SearchState]) => {
+        const data = combined[0];
+        const search = combined[1];
+        return data.filter(
+          (person) => this.applyFilterState(search, person)
         );
       })
     );
@@ -34,8 +34,6 @@ export class SearchFilterService {
       case SearchType.THUMB_INDEX:
         return (this.startsWith(person.name, searchState.query)
           || this.startsWith(person.surname, searchState.query));
-      case SearchType.DATA_PROVIDED:
-        return true;
     }
   }
 
