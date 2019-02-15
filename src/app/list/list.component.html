@@ -1,0 +1,9 @@
+<input #search style="width: 100%; margin-top: 20px; margin-bottom: 20px">
+
+
+<app-thumb-index #thumbIndex (letterClicked)="letterClicked($event)"></app-thumb-index>
+<ul>
+  <li *ngFor="let person of (filteredPersons$ | async)">
+    {{ person.name }}, {{ person.surname }}
+  </li>
+</ul>
